@@ -7,6 +7,7 @@ const chalk = require('chalk');
 const minimist = require('minimist');
 const cliProgress = require('cli-progress');
 const defaultAnswers = require('rc')('webperf');
+const { repository: { url: repositoryURL } } = require('./package.json');
 
 function* urlGenerator(routes, count, newURL, comparisonURL) {
   // eslint-disable-next-line no-restricted-syntax
@@ -104,9 +105,14 @@ const getResultRow = (route, site, result) => [
       reduced.push([...(acc[i] ?? []), curr[COLUMN_TO_RESULT_MAP[key]]]);
     });
     return reduced;
-  }, []).map((item) => (item.reduce((sum, part) => sum + part, 0) / item.length).toLocaleString('en-US', {
-    maximumFractionDigits: 5,
-  })),
+  }, []).map((item) => {
+    const average = item.reduce((sum, part) => sum + part, 0) / item.length;
+    return average.toLocaleString('en-US', {
+      // I normally agree with you, AirBnB, but in this case succinctness is my jam.
+      // eslint-disable-next-line no-nested-ternary
+      maximumFractionDigits: average > 1000 ? 0 : average > 100 ? 1 : average > 1 ? 3 : 5,
+    });
+  }),
 ];
 
 const getRouteRows = (route, { new: newPage, comparison }) => {
@@ -145,7 +151,7 @@ const logResults = (results) => {
         ${comparison.map((item, i) => item.toString().padEnd(maximums[i])).join('   ')}
         `).join('')}
 
-        ${chalk.hex('#BE1C00')('Thank you for using webperf-comparison! Any issues or comments, please ')}
+        ${chalk.hex('#BE1C00')(`Thank you for using webperf-comparison! Any issues or comments, please add them to the GitHub repository: ${repositoryURL}`)}
     `);
 };
 const loadFromJSON = () => {
