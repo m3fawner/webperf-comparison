@@ -1,12 +1,16 @@
+<img src="https://img.shields.io/npm/v/webperf-comparison" /> <img src="https://img.shields.io/node/v/webperf-comparison" />
+
 # Web performance comparison tool
 
 ## Purpose
+
 - Run lighthouse in a headless mode in an automated fashion
 - [Able to perform multiple runs in order to get a better aggregate result](https://github.com/GoogleChrome/lighthouse/blob/HEAD/docs/variability.md)
 - Perform a comparison between two hosted experiences
 - Grok Lighthouse's insanely large JSON response
 
 ## Pre-requisites
+
 - Node 14+, I haven't tested on any previous versions, so ultimately it could work prior, but I haven't validated it. YMMV
 - Chrome installed -- Necessary for running lighthouse!
 
@@ -16,20 +20,24 @@
 ## Starting 
 
 ### by way of cloning this project
-1. Install the packages, using `npm i`
-1. Start the prompts using `npm start`
+
+- Install the packages, using `npm i`
+- Start the prompts using `npm start`
 
 ### via the published module
-1. Run the command `npx webperf-comparison`
+
+- Run the command `npx webperf-comparison`
 
 1. Answer all the prompts (note: light gray values represent defaults, pressing enter accepts the default, and any keystroke erases the default)
 1. Let lighthouse do its magic, the progress bar should keep you up to date on status
 1. See the output table
 
 ### Previous Use
+
 If you want to re-evaluate the previous run, which leverages the `results.json` written to disk, you can use the command: `webperf-comparison --usePrevious` or, if cloned, `npm run start:previous`
 
 ## Implementation
+
 - [prompts](https://www.npmjs.com/package/prompts) - For asking the leading questions
 - [lighthouse](https://www.npmjs.com/package/lighthouse) - For analyzing web performance
 

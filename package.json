@@ -4,6 +4,10 @@
   "description": "Automated system for running performance evaluations against two systems to determine the change",
   "bin": "index.js",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/m3fawner/webperf-comparison"
+  },
   "scripts": {
     "release": "standard-version",
     "start": "node index.js",
