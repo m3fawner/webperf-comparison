@@ -4,18 +4,21 @@ const HTMLWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
   entry: path.resolve(__dirname, 'site-generation'),
   mode: 'development',
+  resolve: {
+    extensions: ['.jsx', '...'],
+  },
   module: {
     rules: [{
-      test: /.css$/,
-      use: ['style-loader', 'css-loader'],
-    }, {
-      test: /.pug$/,
-      use: ['pug-loader'],
+      test: /.jsx?$/,
+      use: ['babel-loader'],
+      exclude: [/node_modules/],
     }],
   },
   plugins: [
     new HTMLWebpackPlugin({
       title: 'Web performance comparison',
+      templateContent: '<div id="root"></div>',
+      inject: 'body',
     }),
   ],
 };

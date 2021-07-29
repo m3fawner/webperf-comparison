@@ -237,6 +237,8 @@ const loadFromJSON = () => {
     if (loadSite) {
       webpack(webpackConfig, (err) => {
         if (err) {
+          // Gotta let the user know it failed!
+          // eslint-disable-next-line no-console
           console.error(chalk.hex('#A3000B')('An error occurred while compiling the site. Don\'t worry, the results.json has all the data!'));
         } else {
           open(path.resolve(__dirname, 'dist', 'index.html'));
