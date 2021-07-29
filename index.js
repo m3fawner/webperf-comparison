@@ -115,9 +115,9 @@ const getResultRow = (route, site, result) => [
   }),
 ];
 
-const getRouteRows = (route, { new: newPage, comparison }) => {
-  const newResult = getResultRow(route, 'New', newPage);
-  const compResult = getResultRow(route, 'Comp', comparison);
+const getRouteRows = (route, { new: newPage, comparison }, comparisonURL, newURL) => {
+  const newResult = getResultRow(route, newURL, newPage);
+  const compResult = getResultRow(route, comparisonURL, comparison);
   return {
     new: newResult,
     comparison: compResult,
@@ -132,8 +132,9 @@ const getMaxLengths = (collectionOfCollections) => collectionOfCollections
     [],
   );
 
-const logResults = (results) => {
-  const allRoutes = Object.entries(results).map(([route, value]) => getRouteRows(route, value));
+const logResults = (results, comparisonURL, newURL) => {
+  const allRoutes = Object.entries(results)
+    .map(([route, value]) => getRouteRows(route, value, comparisonURL, newURL));
   const headings = order.map((key) => HEADINGS[key]);
   const maximums = getMaxLengths([
     headings,
@@ -155,7 +156,8 @@ const logResults = (results) => {
     `);
 };
 const loadFromJSON = () => {
-  logResults(JSON.parse(fs.readFileSync('results.json', 'UTF-8').toString()));
+  const { data, comparisonURL, newURL } = JSON.parse(fs.readFileSync('results.json', 'UTF-8').toString());
+  logResults(data, comparisonURL, newURL);
 };
 (async () => {
   const { usePrevious } = minimist(process.argv.slice(2));
@@ -173,6 +175,7 @@ const loadFromJSON = () => {
       type: 'text',
       name: 'newURL',
       message: 'What is the URL of the new branch?',
+      initial: defaultAnswers.newURL,
     }, {
       type: 'list',
       name: 'routes',
@@ -192,7 +195,7 @@ const loadFromJSON = () => {
     let item = gen.next();
     // eslint-disable-next-line no-console
     console.debug('Launching chrome');
-    const chrome = await chromeLauncher.launch({ chromeFlags: ['--headless'] });
+    const chrome = await chromeLauncher.launch({ chromeFlags: ['--headless', '--ignore-certificate-errors'] });
     // eslint-disable-next-line no-console
     console.debug('Chrome launched');
     const progress = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
@@ -207,15 +210,24 @@ const loadFromJSON = () => {
       }
       const prop = isNew ? 'new' : 'comparison';
       const existingResults = results[route][prop];
+      let result;
+      try {
       // eslint-disable-next-line no-await-in-loop
-      const result = await getResultForURL(url, chrome.port);
+        result = await getResultForURL(url, chrome.port);
+      } catch (e) {
+        console.error(e, 'occured for URL:', url);
+      }
       progress.increment();
       results[route][prop] = [...existingResults, result];
       item = gen.next();
     }
     await chrome.kill();
     progress.stop();
-    fs.writeFileSync('results.json', JSON.stringify(results, null, 5));
-    logResults(results);
+    fs.writeFileSync('results.json', JSON.stringify({
+      newURL,
+      comparisonURL,
+      data: results,
+    }, null, 5));
+    logResults(results, comparisonURL, newURL);
   }
 })();
