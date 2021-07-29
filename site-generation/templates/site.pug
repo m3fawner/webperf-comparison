@@ -1,0 +1,11 @@
+.py-4
+    header
+        include introduction.pug
+    main
+        if criticalError
+            .container
+                .alert.alert-danger A critical error occurred, most likely a lack of #[code results.json]. Please ensure a successful run occurred.
+        else
+            include standard-deviation-table.pug
+    footer
+        include footer.pug

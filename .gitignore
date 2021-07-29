@@ -1,4 +1,4 @@
 node_modules
 results.json
-defaults.js
 .webperfrc
+dist

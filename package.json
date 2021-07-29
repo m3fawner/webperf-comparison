@@ -12,6 +12,7 @@
     "release": "standard-version",
     "start": "node index.js",
     "start:previous": "node index.js --usePrevious",
+    "start:site": "webpack serve",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Evan Williams",
@@ -20,18 +21,31 @@
     "node": ">=14"
   },
   "dependencies": {
+    "bootstrap": "^5.0.2",
+    "bootstrap-icons": "^1.5.0",
     "chalk": "^3.0.0",
     "chrome-launcher": "^0.14.0",
     "cli-progress": "^3.9.0",
+    "css-loader": "^6.2.0",
+    "d3": "^7.0.0",
+    "d3-array": "^3.0.1",
+    "d3-format": "^3.0.1",
+    "html-webpack-plugin": "^5.3.2",
     "lighthouse": "^8.1.0",
     "minimist": "^1.2.5",
+    "open": "^6.4.0",
     "prompts": "^2.4.1",
-    "rc": "^1.2.8"
+    "pug-loader": "^2.4.0",
+    "rc": "^1.2.8",
+    "style-loader": "^3.2.1",
+    "webpack": "^5.47.0"
   },
   "devDependencies": {
     "eslint": "^7.31.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.23.4",
-    "standard-version": "^9.3.1"
+    "standard-version": "^9.3.1",
+    "webpack-cli": "^4.7.2",
+    "webpack-dev-server": "^3.11.2"
   }
 }

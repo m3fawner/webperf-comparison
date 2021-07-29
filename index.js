@@ -7,7 +7,11 @@ const chalk = require('chalk');
 const minimist = require('minimist');
 const cliProgress = require('cli-progress');
 const defaultAnswers = require('rc')('webperf');
+const webpack = require('webpack');
+const open = require('open');
+const path = require('path');
 const { repository: { url: repositoryURL } } = require('./package.json');
+const webpackConfig = require('./webpack.config');
 
 function* urlGenerator(routes, count, newURL, comparisonURL) {
   // eslint-disable-next-line no-restricted-syntax
@@ -165,7 +169,7 @@ const loadFromJSON = () => {
     loadFromJSON();
   } else {
     const {
-      comparisonURL, newURL, routes, runs,
+      comparisonURL, newURL, routes, runs, loadSite,
     } = await prompts([{
       type: 'text',
       name: 'comparisonURL',
@@ -186,6 +190,11 @@ const loadFromJSON = () => {
       name: 'runs',
       message: 'How many times, per experience, would you like to run the lighthouse runner?',
       initial: defaultAnswers.runs,
+    }, {
+      type: 'toggle',
+      name: 'loadSite',
+      message: 'Would you like to view the full results via your browser?',
+      initial: defaultAnswers.loadSite,
     }]);
     const safeNewURL = newURL.endsWith('/') ? newURL.slice(0, -1) : newURL;
     const safeComparisonURL = comparisonURL.endsWith('/') ? comparisonURL.slice(0, -1) : comparisonURL;
@@ -210,13 +219,8 @@ const loadFromJSON = () => {
       }
       const prop = isNew ? 'new' : 'comparison';
       const existingResults = results[route][prop];
-      let result;
-      try {
       // eslint-disable-next-line no-await-in-loop
-        result = await getResultForURL(url, chrome.port);
-      } catch (e) {
-        console.error(e, 'occured for URL:', url);
-      }
+      const result = await getResultForURL(url, chrome.port);
       progress.increment();
       results[route][prop] = [...existingResults, result];
       item = gen.next();
@@ -229,5 +233,15 @@ const loadFromJSON = () => {
       data: results,
     }, null, 5));
     logResults(results, comparisonURL, newURL);
+
+    if (loadSite) {
+      webpack(webpackConfig, (err) => {
+        if (err) {
+          console.error(chalk.hex('#A3000B')('An error occurred while compiling the site. Don\'t worry, the results.json has all the data!'));
+        } else {
+          open(path.resolve(__dirname, 'dist', 'index.html'));
+        }
+      });
+    }
   }
 })();
