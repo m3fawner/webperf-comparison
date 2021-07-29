@@ -51,5 +51,16 @@ The configuration file can be defined in a number of ways, as per the [rc module
 | Property  | Description |
 | ------------- | ------------- |
 | runs  | The number of times to run lighthouse against each URL/route combination  |
+| newURL | The URL of the new deployment to compare against the comparisonURL |
 | comparisonURL  | The URL of the comparison experience  |
 | routes  | A comma delimited list of paths to test per URL (i.e. /, /test) |
+| loadSite | Whether to load the results details site upon finish, leaving just the command line output |
+
+## Site development
+
+Want to help change what the site output is? That's great! Thanks for the help, in advance. You will have to clone this repository to do so. After installing the npm modules, you should be able to invoke `npm start:site` to get running locally.
+
+Note, it does require a valid `results.json` file at the root of the project directory, so you'll have to drop one in or produce one via `npm start`. 
+
+### Pug? D3? _BOOTSTRAP_? Aren't you a web dev?
+Yes, yes, please don't judge. I didn't want to think through the aspects of transpiling, dependency management, potential hosting, etc. I do that too much during my day job and the outcome of a Pug/Bootstrap build is really simplistic (check the transpiled code, it's basically all d3, boostrap, and webpack overhead).
