@@ -36,6 +36,10 @@
 
 If you want to re-evaluate the previous run, which leverages the `results.json` written to disk, you can use the command: `webperf-comparison --usePrevious` or, if cloned, `npm run start:previous`
 
+## Want to run your own Chromium? Use the CHROME_PATH environment argument
+
+`chrome-launcher` allows you to define the CHROME_PATH for the launcher. For instance, if you wanted to run Brave Browser, you could do `CHROME_PATH="C:\Program Files (x86)\BraveSoftware\Brave-Browser\Application\brave.exe" npm start`, and huzzah, it works!
+
 ## Implementation
 
 - [prompts](https://www.npmjs.com/package/prompts) - For asking the leading questions
@@ -61,6 +65,3 @@ The configuration file can be defined in a number of ways, as per the [rc module
 Want to help change what the site output is? That's great! Thanks for the help, in advance. You will have to clone this repository to do so. After installing the npm modules, you should be able to invoke `npm start:site` to get running locally.
 
 Note, it does require a valid `results.json` file at the root of the project directory, so you'll have to drop one in or produce one via `npm start`. 
-
-### Pug? D3? _BOOTSTRAP_? Aren't you a web dev?
-Yes, yes, please don't judge. I didn't want to think through the aspects of transpiling, dependency management, potential hosting, etc. I do that too much during my day job and the outcome of a Pug/Bootstrap build is really simplistic (check the transpiled code, it's basically all d3, boostrap, and webpack overhead).
