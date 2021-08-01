@@ -6,15 +6,14 @@ import {
   AccordionIcon,
   Box,
   Tooltip,
-  Heading,
 } from '@chakra-ui/react';
 import { METRICS, METRIC_LABELS_LONG, METRIC_HINTS } from '../../constants';
-import StandardDeviationTable from './StandardDeviationTable';
+import MetricGroup from './MetricGroup';
 
 const Metrics = (props) => <Accordion {...props}>
   {
-    Object.entries(METRICS)
-      .map(([key, metric]) => (
+    Object.keys(METRICS)
+      .map((key) => (
         <AccordionItem key={key}>
           <h2>
             <AccordionButton>
@@ -25,8 +24,7 @@ const Metrics = (props) => <Accordion {...props}>
             </AccordionButton>
           </h2>
           <AccordionPanel pb={4}>
-            <Heading as="h3" size="sm" mb={4}>{METRIC_HINTS[key]}</Heading>
-            <StandardDeviationTable metric={metric} />
+            <MetricGroup metricLookupKey={key} />
           </AccordionPanel>
         </AccordionItem>
       ))
