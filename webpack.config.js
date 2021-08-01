@@ -12,6 +12,11 @@ module.exports = {
       test: /.jsx?$/,
       use: ['babel-loader'],
       exclude: [/node_modules/],
+    },
+    {
+      test: /\.jsx?$/,
+      enforce: 'pre',
+      use: ['source-map-loader'],
     }],
   },
   plugins: [

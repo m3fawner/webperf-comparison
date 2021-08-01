@@ -1,6 +1,5 @@
-import { format } from 'd3-format';
-import { deviation, mean } from 'd3-array';
 import { useContext, useMemo } from 'react';
+import PropTypes from 'prop-types';
 import {
   Table,
   Thead,
@@ -12,37 +11,29 @@ import {
   SkeletonText,
   Box,
 } from '@chakra-ui/react';
+import { METRICS } from '../../constants';
 import { ResultsContext } from '../hooks/results';
+import useStandardDeviationOfResults from '../hooks/standardDeviationOfResults';
+import useMeanOfResults from '../hooks/meanOfResults';
 
-const twoDecimal = format('0.4r');
-const getRowsForResultArray = (arr, url, path) => Object.keys(arr[0]).reduce((acc, key) => {
-  const accessor = (obj) => obj[key];
-  return [
-    ...acc, {
-      url,
-      path,
-      metric: key,
-      rowDeviation: twoDecimal(deviation(arr, accessor) || 0),
-      rowMean: twoDecimal(mean(arr, accessor) || 0),
-    },
-  ];
-}, []);
-const getStandardDeviationData = (data, newURL, comparisonURL) => Object
-  .entries(data)
-  .reduce((acc, [path, { new: newSite, comparison }]) => [
-    ...acc,
-    ...getRowsForResultArray(newSite, newURL, path),
-    ...getRowsForResultArray(comparison, comparisonURL, path),
-  ], []);
-
-const StandardDeviationTable = (props) => {
-  const {
-    loaded, data, newURL, comparisonURL,
-  } = useContext(ResultsContext);
-  const tableRows = useMemo(
-    () => (loaded ? getStandardDeviationData(data, newURL, comparisonURL) : []),
-    [data, newURL, comparisonURL, loaded],
-  );
+const StandardDeviationTable = ({ metric, ...props }) => {
+  const { newURL, comparisonURL, loaded } = useContext(ResultsContext);
+  const { stats: mean } = useMeanOfResults();
+  const { stats: standardDeviation } = useStandardDeviationOfResults();
+  const tableRows = useMemo(() => (
+    loaded
+      ? Object.entries(mean).reduce((acc, [path, { new: newSite, comparison }]) => ([
+        ...acc, {
+          url: newURL,
+          mean: newSite[metric],
+          standardDeviation: standardDeviation[path].new[metric],
+          path,
+        }, {
+          url: comparisonURL,
+          mean: comparison[metric],
+          standardDeviation: standardDeviation[path].comparison[metric],
+          path,
+        }]), []) : []), [newURL, comparisonURL, loaded, mean, metric, standardDeviation]);
   return (
     <Box {...props}>
       {loaded ? (
@@ -54,21 +45,19 @@ const StandardDeviationTable = (props) => {
             <Tr>
               <Th>URL</Th>
               <Th>Path</Th>
-              <Th>Metric</Th>
               <Th isNumeric>Standard Deviation</Th>
               <Th isNumeric>Mean</Th>
             </Tr>
           </Thead>
           <Tbody>
             {tableRows.map(({
-              url, path, metric, rowDeviation, rowMean,
+              url, path, standardDeviation: sd, mean: m,
             }) => (
               <Tr key={`${url}${path}${metric}`}>
                 <Td>{url}</Td>
                 <Td>{path}</Td>
-                <Td>{metric}</Td>
-                <Td isNumeric>{rowDeviation}</Td>
-                <Td isNumeric>{rowMean}</Td>
+                <Td isNumeric>{sd}</Td>
+                <Td isNumeric>{m}</Td>
               </Tr>
             ))}
           </Tbody>
@@ -78,5 +67,8 @@ const StandardDeviationTable = (props) => {
       )}
     </Box>
   );
+};
+StandardDeviationTable.propTypes = {
+  metric: PropTypes.oneOf(Object.values(METRICS)),
 };
 export default StandardDeviationTable;

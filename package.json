@@ -21,7 +21,6 @@
     "node": ">=14"
   },
   "dependencies": {
-    "@babel/preset-react": "^7.14.5",
     "@chakra-ui/react": "^1.6.5",
     "@emotion/react": "^11.4.0",
     "@emotion/styled": "^11.3.0",
@@ -44,15 +43,19 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "style-loader": "^3.2.1",
+    "victory": "^35.9.3",
     "webpack": "^5.47.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.14.8",
+    "@babel/preset-react": "^7.14.5",
     "eslint": "^7.31.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-import-resolver-webpack": "^0.13.1",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-react": "^7.24.0",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "source-map-loader": "^3.0.0",
     "standard-version": "^9.3.1",
     "webpack-cli": "^4.7.2",
     "webpack-dev-server": "^3.11.2"

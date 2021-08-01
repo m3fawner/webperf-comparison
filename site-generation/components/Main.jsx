@@ -2,7 +2,7 @@ import {
   Alert, AlertIcon, Container, Code, Flex, Text,
 } from '@chakra-ui/react';
 import useResults, { ResultsContext } from '../hooks/results';
-import StandardDeviationTable from './StandardDeviationTable';
+import Metrics from './Metrics';
 
 const Main = () => {
   const results = useResults();
@@ -18,7 +18,7 @@ const Main = () => {
                         <Text>. Please ensure a successful run occurred.</Text>
                     </Flex>
                 </Alert>
-            ) : <StandardDeviationTable my={4} /> }
+            ) : <Metrics mt={4} /> }
         </Container>
     </ResultsContext.Provider>
   );

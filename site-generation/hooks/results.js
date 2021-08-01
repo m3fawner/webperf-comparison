@@ -10,6 +10,8 @@ const useResults = () => {
   useEffect(() => {
     const loadResults = async () => {
       try {
+        // We know that results.json may not exist
+        // eslint-disable-next-line import/no-unresolved
         setCurrentResults(await import('../../results.json'));
       } catch {
         setFailed(true);
