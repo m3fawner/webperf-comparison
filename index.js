@@ -12,6 +12,7 @@ const open = require('open');
 const path = require('path');
 const { repository: { url: repositoryURL } } = require('./package.json');
 const webpackConfig = require('./webpack.config');
+const { METRICS, METRIC_LOOKUP, METRIC_LABELS } = require('./constants');
 
 function* urlGenerator(routes, count, newURL, comparisonURL) {
   // eslint-disable-next-line no-restricted-syntax
@@ -63,42 +64,15 @@ const getResultForURL = async (url, port) => {
     cumulativeLayoutShift,
   };
 };
-const COLUMN_LOOKUP = {
-  FCP: 'fcp',
-  LCP: 'lcp',
-  INT: 'int',
-  SPD: 'spd',
-  TBT: 'tbt',
-  CLS: 'cls',
-};
-const HEADINGS = {
-  ROUTE: 'Route',
-  NEW_COMP: 'New/Comp',
-  [COLUMN_LOOKUP.FCP]: 'FCP',
-  [COLUMN_LOOKUP.LCP]: 'LCP',
-  [COLUMN_LOOKUP.INT]: 'Interactive',
-  [COLUMN_LOOKUP.SPD]: 'Speed',
-  [COLUMN_LOOKUP.TBT]: 'Blocking Time',
-  [COLUMN_LOOKUP.CLS]: 'CLS',
-};
-const COLUMN_TO_RESULT_MAP = {
-  [COLUMN_LOOKUP.FCP]:
-  'firstContentfulPaint',
-  [COLUMN_LOOKUP.LCP]: 'largestContentfulPaint',
-  [COLUMN_LOOKUP.INT]: 'interactive',
-  [COLUMN_LOOKUP.SPD]: 'speedIndex',
-  [COLUMN_LOOKUP.TBT]: 'totalBlockingTime',
-  [COLUMN_LOOKUP.CLS]: 'cumulativeLayoutShift',
-};
 const order = [
   'ROUTE',
   'NEW_COMP',
-  COLUMN_LOOKUP.FCP,
-  COLUMN_LOOKUP.LCP,
-  COLUMN_LOOKUP.INT,
-  COLUMN_LOOKUP.SPD,
-  COLUMN_LOOKUP.TBT,
-  COLUMN_LOOKUP.CLS,
+  METRIC_LOOKUP.FCP,
+  METRIC_LOOKUP.LCP,
+  METRIC_LOOKUP.INT,
+  METRIC_LOOKUP.SPD,
+  METRIC_LOOKUP.TBT,
+  METRIC_LOOKUP.CLS,
 ];
 const getResultRow = (route, site, result) => [
   route,
@@ -106,7 +80,7 @@ const getResultRow = (route, site, result) => [
   ...result.reduce((acc, curr) => {
     const reduced = [];
     order.slice(2).forEach((key, i) => {
-      reduced.push([...(acc[i] ?? []), curr[COLUMN_TO_RESULT_MAP[key]]]);
+      reduced.push([...(acc[i] ?? []), curr[METRICS[key]]]);
     });
     return reduced;
   }, []).map((item) => {
@@ -139,7 +113,7 @@ const getMaxLengths = (collectionOfCollections) => collectionOfCollections
 const logResults = (results, comparisonURL, newURL) => {
   const allRoutes = Object.entries(results)
     .map(([route, value]) => getRouteRows(route, value, comparisonURL, newURL));
-  const headings = order.map((key) => HEADINGS[key]);
+  const headings = order.map((key) => METRIC_LABELS[key]);
   const maximums = getMaxLengths([
     headings,
     getMaxLengths(allRoutes.map(({ new: newItems }) => newItems)),
@@ -204,7 +178,7 @@ const loadFromJSON = () => {
     let item = gen.next();
     // eslint-disable-next-line no-console
     console.debug('Launching chrome');
-    const chrome = await chromeLauncher.launch({ chromeFlags: ['--headless', '--ignore-certificate-errors'] });
+    const chrome = await chromeLauncher.launch({ chromePath: defaultAnswers.chromePath || process.env.CHROME_PATH, chromeFlags: ['--headless', '--ignore-certificate-errors'] });
     // eslint-disable-next-line no-console
     console.debug('Chrome launched');
     const progress = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
