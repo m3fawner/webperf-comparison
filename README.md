@@ -46,7 +46,7 @@ If you want to re-evaluate the previous run, which leverages the `results.json` 
 - [prompts](https://www.npmjs.com/package/prompts) - For asking the leading questions
 - [lighthouse](https://www.npmjs.com/package/lighthouse) - For analyzing web performance
 
-Using prompts, we gather the URL of the new experience, as well as a comparison experience. Additionally, we ask a series of path segments to test against for each experience and how many times to run the test. Many of these values can be set by a [.webperfrc](#webperfc) for convenience.
+Using prompts, we gather the URL of the new experience (comparison), as well as an original experience. Additionally, we ask a series of path segments to test against for each experience and how many times to run the test. Many of these values can be set by a [.webperfrc](#webperfc) for convenience.
 
 ## <a name="webperfc"></a> .webperfrc
 
@@ -55,7 +55,7 @@ The configuration file can be defined in a number of ways, as per the [rc module
 | Property      | Description                                                                                |
 | ------------- | ------------------------------------------------------------------------------------------ |
 | runs          | The number of times to run lighthouse against each URL/route combination                   |
-| newURL        | The URL of the new deployment to compare against the comparisonURL                         |
+| originalURL        | The URL of the original deployment to compare against the comparisonURL                         |
 | comparisonURL | The URL of the comparison experience                                                       |
 | routes        | A comma delimited list of paths to test per URL (i.e. /, /test)                            |
 | loadSite      | Whether to load the results details site upon finish, leaving just the command line output |
