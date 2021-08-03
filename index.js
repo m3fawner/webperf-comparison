@@ -23,8 +23,6 @@ function* urlGenerator(routes, count, newURL, comparisonURL) {
         route,
         isNew: true,
       };
-    }
-    for (let i = 0; i < count; i += 1) {
       yield {
         url: comparisonURL + route,
         route,
