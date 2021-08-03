@@ -8,7 +8,7 @@ const METRIC_LOOKUP = {
 };
 const METRIC_LABELS = {
   ROUTE: 'Route',
-  NEW_COMP: 'New/Comp',
+  ORIGINAL_COMP: 'Orig./Comp',
   [METRIC_LOOKUP.FCP]: 'FCP',
   [METRIC_LOOKUP.LCP]: 'LCP',
   [METRIC_LOOKUP.INT]: 'Interactive',
