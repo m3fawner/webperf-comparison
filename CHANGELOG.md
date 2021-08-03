@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/m3fawner/webperf-comparison/compare/v1.3.0...v1.4.0) (2021-08-03)
+
+
+### Features
+
+* **cli:** Run every other instead of full group to decrease likelihood of outside factors causing variance ([ce2e3fc](https://github.com/m3fawner/webperf-comparison/commit/ce2e3fc2e527489724a35e8a08af05be6fa74582))
+* **site:** Add box & whisker plots for metric groups ([d108c1f](https://github.com/m3fawner/webperf-comparison/commit/d108c1f27ad13cdb9435fa144499586377498c70))
+* **site:** Regroup standard deviation table to be an accordion per metric ([28660ff](https://github.com/m3fawner/webperf-comparison/commit/28660ff179483d8995d1e7140575e59c58e40de3))
+
 ## [1.3.0](https://github.com/m3fawner/webperf-comparison/compare/v1.2.0...v1.3.0) (2021-07-29)
 
 
