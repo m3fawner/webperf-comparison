@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/m3fawner/webperf-comparison/compare/v1.4.0...v2.0.0) (2021-08-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **cli:** Replace usage of the new keyword throughout code and prompts.
+
+* **cli:** Replace usage of the new keyword throughout code and prompts. ([d936a46](https://github.com/m3fawner/webperf-comparison/commit/d936a469fc9f4c8f59da85b74cf06d2c22b4bf8b))
+
 ## [1.4.0](https://github.com/m3fawner/webperf-comparison/compare/v1.3.0...v1.4.0) (2021-08-03)
 
 
