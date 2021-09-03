@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/m3fawner/webperf-comparison/compare/v1.4.0...v3.0.0) (2021-09-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* **cli:** Replace usage of the new keyword throughout code and prompts.
+
+### Features
+
+* **cli/site:** Add first input delay measurements ([ddd61e1](https://github.com/m3fawner/webperf-comparison/commit/ddd61e1b7eef0f494d3bb9deb9d030f1f5068400))
+
+
+* **cli:** Replace usage of the new keyword throughout code and prompts. ([d936a46](https://github.com/m3fawner/webperf-comparison/commit/d936a469fc9f4c8f59da85b74cf06d2c22b4bf8b))
+
 ## [2.0.0](https://github.com/m3fawner/webperf-comparison/compare/v1.4.0...v2.0.0) (2021-08-03)
 
 
