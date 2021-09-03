@@ -38,14 +38,7 @@ const getResultForURL = async (url, port) => {
       audits: {
         metrics: {
           details: {
-            items: [{
-              firstContentfulPaint,
-              largestContentfulPaint,
-              interactive,
-              speedIndex,
-              totalBlockingTime,
-              cumulativeLayoutShift, // note: seems to be exactly the same every time
-            }],
+            items: [result],
           },
         },
       },
@@ -53,20 +46,17 @@ const getResultForURL = async (url, port) => {
   } = await lighthouse(url, {
     quiet: true, output: 'json', onlyCategories: ['performance'], port,
   });
-  return {
-    firstContentfulPaint,
-    largestContentfulPaint,
-    interactive,
-    speedIndex,
-    totalBlockingTime,
-    cumulativeLayoutShift,
-  };
+  return Object.values(METRICS).reduce((acc, key) => ({
+    ...acc,
+    [key]: result[key],
+  }), {});
 };
 const order = [
   'ROUTE',
   'ORIGINAL_COMP',
   METRIC_LOOKUP.FCP,
   METRIC_LOOKUP.LCP,
+  METRIC_LOOKUP.FID,
   METRIC_LOOKUP.INT,
   METRIC_LOOKUP.SPD,
   METRIC_LOOKUP.TBT,
