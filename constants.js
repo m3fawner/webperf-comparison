@@ -46,10 +46,72 @@ const METRICS = {
   [METRIC_LOOKUP.TBT]: 'totalBlockingTime',
   [METRIC_LOOKUP.CLS]: 'cumulativeLayoutShift',
 };
+const NETWORK_THROTTLES_LOOKUP = {
+  THREE_G_SLOW: '3gslow',
+  THREE_G: '3g',
+  THREE_G_FAST: '3gfast',
+  CABLE: 'cable',
+  FOUR_G: '4g',
+};
+const NETWORK_THROTTLES = {
+  [NETWORK_THROTTLES_LOOKUP.THREE_G_SLOW]: '3gslow',
+  [NETWORK_THROTTLES_LOOKUP.THREE_G]: '3g',
+  [NETWORK_THROTTLES_LOOKUP.THREE_G_FAST]: '3gfast',
+  [NETWORK_THROTTLES_LOOKUP.CABLE]: 'cable',
+  [NETWORK_THROTTLES_LOOKUP.FOUR_G]: '4g',
+};
+const NETWORK_THROTTLES_OPTIONS = {
+  [NETWORK_THROTTLES_LOOKUP.THREE_G_SLOW]: {
+    uploadThroughputKbps: 400,
+    downloadThroughputKbps: 400,
+    rttMs: 200,
+  },
+  [NETWORK_THROTTLES_LOOKUP.THREE_G]: {
+    uploadThroughputKbps: 768,
+    downloadThroughputKbps: 1600,
+    rttMs: 150,
+  },
+  [NETWORK_THROTTLES_LOOKUP.THREE_G_FAST]: {
+    uploadThroughputKbps: 768,
+    downloadThroughputKbps: 1600,
+    rttMs: 75,
+  },
+  [NETWORK_THROTTLES_LOOKUP.CABLE]: {
+    uploadThroughputKbps: 1000,
+    downloadThroughputKbps: 5000,
+    rttMs: 14,
+  },
+  [NETWORK_THROTTLES_LOOKUP.FOUR_G]: {
+    uploadThroughputKbps: 9000,
+    downloadThroughputKbps: 9000,
+    rttMs: 85,
+  },
+};
+const CPU_THROTTLES_LOOKUP = {
+  SLOW_MOBILE_CPU: 'slow_mobile',
+  MOBILE_CPU: 'mobile',
+  DESKTOP: 'desktop',
+};
+const CPU_THROTTLES = {
+  [CPU_THROTTLES_LOOKUP.SLOW_MOBILE_CPU]: 6,
+  [CPU_THROTTLES_LOOKUP.MOBILE_CPU]: 4,
+  [CPU_THROTTLES_LOOKUP.DESKTOP]: 1,
+};
+const CPU_THROTTLES_DESCRIPTIONS = {
+  [CPU_THROTTLES_LOOKUP.SLOW_MOBILE_CPU]: 'Slow mobile phone',
+  [CPU_THROTTLES_LOOKUP.MOBILE_CPU]: 'Mobile phone',
+  [CPU_THROTTLES_LOOKUP.DESKTOP]: 'Desktop',
+};
+
 module.exports = {
   METRICS,
   METRIC_LABELS,
   METRIC_LOOKUP,
   METRIC_HINTS,
   METRIC_LABELS_LONG,
+  NETWORK_THROTTLES,
+  NETWORK_THROTTLES_OPTIONS,
+  CPU_THROTTLES_LOOKUP,
+  CPU_THROTTLES,
+  CPU_THROTTLES_DESCRIPTIONS,
 };

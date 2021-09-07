@@ -1,5 +1,8 @@
 {
     "eslint.options": {
         "ext": ".jsx,.js"
-    }
+    },
+    "cSpell.words": [
+        "webperf"
+    ]
 }

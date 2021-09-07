@@ -12,7 +12,16 @@ const open = require('open');
 const path = require('path');
 const { repository: { url: repositoryURL } } = require('./package.json');
 const webpackConfig = require('./webpack.config');
-const { METRICS, METRIC_LOOKUP, METRIC_LABELS } = require('./constants');
+const {
+  METRICS,
+  METRIC_LOOKUP,
+  METRIC_LABELS,
+  NETWORK_THROTTLES,
+  NETWORK_THROTTLES_OPTIONS,
+  CPU_THROTTLES,
+  CPU_THROTTLES_LOOKUP,
+  CPU_THROTTLES_DESCRIPTIONS,
+} = require('./constants');
 
 function* urlGenerator(routes, count, originalURL, comparisonURL) {
   // eslint-disable-next-line no-restricted-syntax
@@ -32,7 +41,7 @@ function* urlGenerator(routes, count, originalURL, comparisonURL) {
   }
 }
 
-const getResultForURL = async (url, port) => {
+const getResultForURL = async (url, lighthouseOptions) => {
   const {
     lhr: {
       audits: {
@@ -44,7 +53,7 @@ const getResultForURL = async (url, port) => {
       },
     },
   } = await lighthouse(url, {
-    quiet: true, output: 'json', onlyCategories: ['performance'], port,
+    quiet: true, output: 'json', onlyCategories: ['performance'], ...lighthouseOptions,
   });
   return Object.values(METRICS).reduce((acc, key) => ({
     ...acc,
@@ -131,8 +140,26 @@ const loadFromJSON = () => {
     loadFromJSON();
   } else {
     const {
-      comparisonURL, originalURL, routes, runs, loadSite,
+      network, cpu, comparisonURL, originalURL, routes, runs, loadSite,
     } = await prompts([{
+      type: 'select',
+      name: 'network',
+      message: 'Which network throttling option?',
+      initial: defaultAnswers.network,
+      choices: Object.values(NETWORK_THROTTLES).map((value) => ({
+        title: value,
+        value,
+      })),
+    }, {
+      type: 'select',
+      name: 'cpu',
+      message: 'Which CPU throttling option?',
+      initial: defaultAnswers.cpu,
+      choices: Object.values(CPU_THROTTLES_LOOKUP).map((value) => ({
+        title: CPU_THROTTLES_DESCRIPTIONS[value],
+        value: CPU_THROTTLES[value],
+      })),
+    }, {
       type: 'text',
       name: 'originalURL',
       message: 'What is the URL of the original?',
@@ -157,7 +184,7 @@ const loadFromJSON = () => {
       name: 'loadSite',
       message: 'Would you like to view the full results via your browser?',
       initial: defaultAnswers.loadSite,
-    }]);
+    }], { onCancel: () => process.exit(0) });
     const safeOriginalURL = originalURL.endsWith('/') ? originalURL.slice(0, -1) : originalURL;
     const safeComparisonURL = comparisonURL.endsWith('/') ? comparisonURL.slice(0, -1) : comparisonURL;
     const safeRoutes = routes.map((route) => route.trim());
@@ -182,7 +209,11 @@ const loadFromJSON = () => {
       const prop = isOriginal ? 'original' : 'comparison';
       const existingResults = results[route][prop];
       // eslint-disable-next-line no-await-in-loop
-      const result = await getResultForURL(url, chrome.port);
+      const result = await getResultForURL(url, {
+        port: chrome.port,
+        throttlingMethod: 'simulate',
+        throttling: { ...NETWORK_THROTTLES_OPTIONS[network], cpuSlowdownMultiplier: cpu },
+      });
       progress.increment();
       results[route][prop] = [...existingResults, result];
       item = gen.next();
