@@ -23,20 +23,18 @@ const {
   CPU_THROTTLES_DESCRIPTIONS,
 } = require('./constants');
 
-function* urlGenerator(routes, count, originalURL, comparisonURL) {
-  // eslint-disable-next-line no-restricted-syntax
-  for (const route of routes) {
+function* urlGenerator(routes, count, hosts) {
+  for (let h = 0; h < routes.length; h += 1) {
     for (let i = 0; i < count; i += 1) {
-      yield {
-        url: originalURL + route,
-        route,
-        isOriginal: true,
-      };
-      yield {
-        url: comparisonURL + route,
-        route,
-        isOriginal: false,
-      };
+      for (let j = 0; j < hosts.length; j += 1) {
+        const host = hosts[j];
+        const route = routes[h];
+        yield {
+          url: host + route,
+          route,
+          host,
+        };
+      }
     }
   }
 }
@@ -62,7 +60,7 @@ const getResultForURL = async (url, lighthouseOptions) => {
 };
 const order = [
   'ROUTE',
-  'ORIGINAL_COMP',
+  'HOST',
   METRIC_LOOKUP.FCP,
   METRIC_LOOKUP.LCP,
   METRIC_LOOKUP.FID,
@@ -90,14 +88,9 @@ const getResultRow = (route, site, result) => [
   }),
 ];
 
-const getRouteRows = (route, { original, comparison }, comparisonURL, originalURL) => {
-  const origResult = getResultRow(route, originalURL, original);
-  const compResult = getResultRow(route, comparisonURL, comparison);
-  return {
-    original: origResult,
-    comparison: compResult,
-  };
-};
+const getRouteRows = (route, results) => Object
+  .entries(results)
+  .map(([host, data]) => getResultRow(route, host, data));
 
 const getMaxLengths = (collectionOfCollections) => collectionOfCollections
   .reduce(
@@ -107,32 +100,39 @@ const getMaxLengths = (collectionOfCollections) => collectionOfCollections
     [],
   );
 
-const logResults = (results, comparisonURL, originalURL) => {
+const COLUMN_SPACING = '     ';
+const logResults = (results) => {
   const allRoutes = Object.entries(results)
-    .map(([route, value]) => getRouteRows(route, value, comparisonURL, originalURL));
+    .map(([route, value]) => getRouteRows(route, value));
   const headings = order.map((key) => METRIC_LABELS[key]);
   const maximums = getMaxLengths([
     headings,
-    getMaxLengths(allRoutes.map(({ original }) => original)),
-    getMaxLengths(allRoutes.map(({ comparison }) => comparison)),
+    ...allRoutes.flat(),
   ]);
+  const resultRows = Object
+    .values(allRoutes)
+    /**
+     * Not a fan of how this is done, but each result should have the column padded
+     * to the maximum column width (maximums[i]), be a single string with the appropriate
+     * column spacing to align with the headers join(COLUMN_SPACING), end in a new line character
+     * join('\n'), but then also have each result array, which represents a route, separated from
+     * the next route, with another \n (hence the template string).
+     */
+    .map((resultArray) => `${resultArray.map((item) => item.map((column, i) => column.toString().padEnd(maximums[i])).join(COLUMN_SPACING)).join('\n')}\n`);
   // eslint-disable-next-line no-console
   console.log(`
-        ${chalk.hex('#FFD237').bold('Detailed results are logged in "results.json" of this directory.')}
-        ${chalk.hex('#579DFF')('The following is a comparison of the averages across the multiple runs.')}
+${chalk.hex('#FFD237').bold('Detailed results are logged in "results.json" of this directory.')}
+${chalk.hex('#579DFF')('The following is a comparison of the averages across the multiple runs.')}
 
-        ${headings.map((heading, i) => heading.padEnd(maximums[i])).join('   ')}
-        ${allRoutes.map(({ original, comparison }) => `
-        ${original.map((item, i) => item.toString().padEnd(maximums[i])).join('   ')}
-        ${comparison.map((item, i) => item.toString().padEnd(maximums[i])).join('   ')}
-        `).join('')}
+${headings.map((heading, i) => heading.padEnd(maximums[i])).join(COLUMN_SPACING)}
+${resultRows.join('\n')}
 
-        ${chalk.hex('#BE1C00')(`Thank you for using webperf-comparison! Any issues or comments, please add them to the GitHub repository: ${repositoryURL}`)}
+${chalk.hex('#BE1C00')(`Thank you for using webperf-comparison! Any issues or comments, please add them to the GitHub repository: ${repositoryURL}`)}
     `);
 };
 const loadFromJSON = () => {
-  const { data, comparisonURL, originalURL } = JSON.parse(fs.readFileSync('results.json', 'UTF-8').toString());
-  logResults(data, comparisonURL, originalURL);
+  const { data, hosts } = JSON.parse(fs.readFileSync('results.json', 'UTF-8').toString());
+  logResults(data, hosts);
 };
 (async () => {
   const { usePrevious } = minimist(process.argv.slice(2));
@@ -140,7 +140,7 @@ const loadFromJSON = () => {
     loadFromJSON();
   } else {
     const {
-      network, cpu, comparisonURL, originalURL, routes, runs, loadSite,
+      network, cpu, hosts, routes, runs, loadSite,
     } = await prompts([{
       type: 'select',
       name: 'network',
@@ -160,15 +160,10 @@ const loadFromJSON = () => {
         value: CPU_THROTTLES[value],
       })),
     }, {
-      type: 'text',
-      name: 'originalURL',
-      message: 'What is the URL of the original?',
-      initial: defaultAnswers.originalURL,
-    }, {
-      type: 'text',
-      name: 'comparisonURL',
-      message: 'What is the URL to compare against?',
-      initial: defaultAnswers.comparisonURL,
+      type: 'list',
+      name: 'hosts',
+      message: 'What are the hosts that you wish to test?',
+      initial: defaultAnswers.hosts,
     }, {
       type: 'list',
       name: 'routes',
@@ -185,10 +180,9 @@ const loadFromJSON = () => {
       message: 'Would you like to view the full results via your browser?',
       initial: defaultAnswers.loadSite,
     }], { onCancel: () => process.exit(0) });
-    const safeOriginalURL = originalURL.endsWith('/') ? originalURL.slice(0, -1) : originalURL;
-    const safeComparisonURL = comparisonURL.endsWith('/') ? comparisonURL.slice(0, -1) : comparisonURL;
+    const safeHosts = hosts.map((host) => (host.endsWith('/') ? host.slice(0, -1) : host));
     const safeRoutes = routes.map((route) => route.trim());
-    const gen = urlGenerator(safeRoutes, runs, safeOriginalURL, safeComparisonURL);
+    const gen = urlGenerator(safeRoutes, runs, safeHosts);
     const results = {};
     let item = gen.next();
     // eslint-disable-next-line no-console
@@ -197,17 +191,17 @@ const loadFromJSON = () => {
     // eslint-disable-next-line no-console
     console.debug('Chrome launched');
     const progress = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-    progress.start(2 * routes.length * runs, 0);
+    progress.start(hosts.length * routes.length * runs, 0);
     while (!item.done) {
-      const { route, url, isOriginal } = item.value;
+      const { route, url, host } = item.value;
       if (!results[route]) {
-        results[route] = {
-          original: [],
-          comparison: [],
-        };
+        // Establish initial list of results on a new route
+        results[route] = hosts.reduce((acc, curr) => ({
+          ...acc,
+          [curr]: [],
+        }), {});
       }
-      const prop = isOriginal ? 'original' : 'comparison';
-      const existingResults = results[route][prop];
+      const existingResults = results[route][host];
       // eslint-disable-next-line no-await-in-loop
       const result = await getResultForURL(url, {
         port: chrome.port,
@@ -215,17 +209,16 @@ const loadFromJSON = () => {
         throttling: { ...NETWORK_THROTTLES_OPTIONS[network], cpuSlowdownMultiplier: cpu },
       });
       progress.increment();
-      results[route][prop] = [...existingResults, result];
+      results[route][host] = [...existingResults, result];
       item = gen.next();
     }
     await chrome.kill();
     progress.stop();
     fs.writeFileSync('results.json', JSON.stringify({
-      originalURL,
-      comparisonURL,
+      hosts,
       data: results,
     }, null, 5));
-    logResults(results, comparisonURL, originalURL);
+    logResults(results, hosts);
 
     if (loadSite) {
       webpack(webpackConfig, (err) => {

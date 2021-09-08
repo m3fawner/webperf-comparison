@@ -9,7 +9,7 @@ const METRIC_LOOKUP = {
 };
 const METRIC_LABELS = {
   ROUTE: 'Route',
-  ORIGINAL_COMP: 'Orig./Comp',
+  HOST: 'Host',
   [METRIC_LOOKUP.FCP]: 'FCP',
   [METRIC_LOOKUP.LCP]: 'LCP',
   [METRIC_LOOKUP.FID]: 'FID',

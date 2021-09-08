@@ -55,8 +55,7 @@ The configuration file can be defined in a number of ways, as per the [rc module
 | Property      | Description                                                                                |
 | ------------- | ------------------------------------------------------------------------------------------ |
 | runs          | The number of times to run lighthouse against each URL/route combination                   |
-| originalURL        | The URL of the original deployment to compare against the comparisonURL                         |
-| comparisonURL | The URL of the comparison experience                                                       |
+| hosts        | A comma delimited list of hosts to test against |
 | routes        | A comma delimited list of paths to test per URL (i.e. /, /test)                            |
 | loadSite      | Whether to load the results details site upon finish, leaving just the command line output |
 | chromePath    | Path to Chromium install, optional                                                         |
