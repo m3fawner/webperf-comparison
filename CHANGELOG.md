@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/m3fawner/webperf-comparison/compare/v1.4.0...v3.1.0) (2021-09-08)
+
+
+### Features
+
+* **cli/site:** Add first input delay measurements ([935478a](https://github.com/m3fawner/webperf-comparison/commit/935478aca13892db9abd600f00454b5d91df7d13))
+* **cli:** Throttling of network & CPU added, simulated via lighthouse ([3652f3e](https://github.com/m3fawner/webperf-comparison/commit/3652f3eaee4288bf1d51fff5ae2944946dd83338))
+
 ## [3.0.0](https://github.com/m3fawner/webperf-comparison/compare/v1.4.0...v3.0.0) (2021-09-03)
 
 
