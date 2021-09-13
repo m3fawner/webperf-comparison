@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/m3fawner/webperf-comparison/compare/v3.1.0...v4.0.0) (2021-09-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* **cli:** Allow a list of hosts, instead of assuming original and comparison. This allows for single runs, as well as more than 2 hosts.
+
+### Features
+
+* **cli:** Allow a list of hosts, instead of assuming original and comparison. This allows for single runs, as well as more than 2 hosts. ([586ad87](https://github.com/m3fawner/webperf-comparison/commit/586ad879a8bd5d6434e316cee07eb189b7b17131))
+
 ## [3.1.0](https://github.com/m3fawner/webperf-comparison/compare/v1.4.0...v3.1.0) (2021-09-08)
 
 
