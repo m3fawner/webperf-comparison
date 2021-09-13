@@ -7,14 +7,15 @@ import { METRICS } from '../../constants';
 
 const MetricGraph = ({ metric, ...props }) => {
   const {
-    loaded, failed, data, originalURL, comparisonURL,
+    loaded, failed, data,
   } = useResults();
   const plotData = useMemo(() => (loaded && !failed ? Object.entries(data)
-    .reduce((acc, [path, { original, comparison }]) => ([
+    .reduce((acc, [path, pathResults]) => ([
       ...acc,
-      { x: `${originalURL}${path}`, y: original.map((obj) => obj[metric]) },
-      { x: `${comparisonURL}${path}`, y: comparison.map((obj) => obj[metric]) },
-    ]), []) : []), [data, originalURL, comparisonURL, metric, loaded, failed]);
+      ...Object.entries(pathResults).map(([host, results]) => ({
+        x: `${host}${path}`, y: results.map((obj) => obj[metric]),
+      })),
+    ]), []) : []), [data, metric, loaded, failed]);
   const chartHeight = useMemo(() => 100 * plotData.length, [plotData.length]);
   return loaded && !failed && (
   <Box {...props} height={chartHeight} pb={4}>

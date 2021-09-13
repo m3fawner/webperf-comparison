@@ -17,29 +17,24 @@ import useStandardDeviationOfResults from '../hooks/standardDeviationOfResults';
 import useMeanOfResults from '../hooks/meanOfResults';
 
 const StandardDeviationTable = ({ metric, ...props }) => {
-  const { originalURL, comparisonURL, loaded } = useContext(ResultsContext);
+  const { loaded } = useContext(ResultsContext);
   const { stats: mean } = useMeanOfResults();
   const { stats: standardDeviation } = useStandardDeviationOfResults();
   const tableRows = useMemo(() => (
     loaded
-      ? Object.entries(mean).reduce((acc, [path, { original, comparison }]) => ([
-        ...acc, {
-          url: originalURL,
-          mean: original[metric],
-          standardDeviation: standardDeviation[path].original[metric],
+      ? Object.entries(mean).reduce((acc, [path, pathResults]) => ([
+        ...acc, ...Object.entries(pathResults).map(([host, results]) => ({
+          url: host,
+          mean: results[metric],
+          standardDeviation: standardDeviation[path][host][metric],
           path,
-        }, {
-          url: comparisonURL,
-          mean: comparison[metric],
-          standardDeviation: standardDeviation[path].comparison[metric],
-          path,
-        }]), []) : []), [originalURL, comparisonURL, loaded, mean, metric, standardDeviation]);
+        }))]), []) : []), [loaded, mean, metric, standardDeviation]);
   return (
     <Box {...props}>
       {loaded ? (
         <Table variant="striped">
           <TableCaption>
-            Results for web performance run on sites {originalURL} and {comparisonURL}
+            Standard deviation and mean of web performance results run.
           </TableCaption>
           <Thead>
             <Tr>

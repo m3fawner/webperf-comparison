@@ -9,6 +9,11 @@ All notable changes to this project will be documented in this file. See [standa
 
 * **cli:** Allow a list of hosts, instead of assuming original and comparison. This allows for single runs, as well as more than 2 hosts.
 
+#### Breaking chang
+* originalURL is deprecated
+* comparisonURL is deprecated
+* *New property* `hosts`: Comma delimited list of hostnames to run lighthouse against. Allows for single host, or many. Replaces originalURL/comparisonURL
+
 ### Features
 
 * **cli:** Allow a list of hosts, instead of assuming original and comparison. This allows for single runs, as well as more than 2 hosts. ([586ad87](https://github.com/m3fawner/webperf-comparison/commit/586ad879a8bd5d6434e316cee07eb189b7b17131))

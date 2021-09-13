@@ -46,7 +46,7 @@ If you want to re-evaluate the previous run, which leverages the `results.json` 
 - [prompts](https://www.npmjs.com/package/prompts) - For asking the leading questions
 - [lighthouse](https://www.npmjs.com/package/lighthouse) - For analyzing web performance
 
-Using prompts, we gather the URL of the new experience (comparison), as well as an original experience. Additionally, we ask a series of path segments to test against for each experience and how many times to run the test. Many of these values can be set by a [.webperfrc](#webperfc) for convenience.
+Using prompts, we gather the URL of the host(s) to run against. Additionally, we ask a series of path segments to test against for each experience and how many times to run the test. Many of these values can be set by a [.webperfrc](#webperfc) for convenience.
 
 ## <a name="webperfc"></a> .webperfrc
 
