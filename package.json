@@ -1,6 +1,6 @@
 {
   "name": "webperf-comparison",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "Automated system for running performance evaluations against two systems to determine the change",
   "bin": "index.js",
   "main": "index.js",

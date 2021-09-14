@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.0.0](https://github.com/m3fawner/webperf-comparison/compare/v4.0.0...v5.0.0) (2021-09-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* Log prompt answers to the results.json, consume them in the site to provide context to previous run values
+
+### Features
+
+* Log prompt answers to the results.json, consume them in the site to provide context to previous run values ([274b91f](https://github.com/m3fawner/webperf-comparison/commit/274b91f87b37538f423f29d5af436ce60b6793f6))
+
 ## [4.0.0](https://github.com/m3fawner/webperf-comparison/compare/v3.1.0...v4.0.0) (2021-09-13)
 
 
