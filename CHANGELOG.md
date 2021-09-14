@@ -9,6 +9,9 @@ All notable changes to this project will be documented in this file. See [standa
 
 * Log prompt answers to the results.json, consume them in the site to provide context to previous run values
 
+#### Breaking change
+* `hosts` became a nested property of promptAnswers, breaking previous results.json outputs
+
 ### Features
 
 * Log prompt answers to the results.json, consume them in the site to provide context to previous run values ([274b91f](https://github.com/m3fawner/webperf-comparison/commit/274b91f87b37538f423f29d5af436ce60b6793f6))
@@ -20,7 +23,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 * **cli:** Allow a list of hosts, instead of assuming original and comparison. This allows for single runs, as well as more than 2 hosts.
 
-#### Breaking chang
+#### Breaking change
 * originalURL is deprecated
 * comparisonURL is deprecated
 * *New property* `hosts`: Comma delimited list of hostnames to run lighthouse against. Allows for single host, or many. Replaces originalURL/comparisonURL
