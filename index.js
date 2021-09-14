@@ -21,6 +21,8 @@ const {
   CPU_THROTTLES,
   CPU_THROTTLES_LOOKUP,
   CPU_THROTTLES_DESCRIPTIONS,
+  PROMPT_KEY_LOOKUP,
+  PROMPT_DESCRIPTIONS,
 } = require('./constants');
 
 function* urlGenerator(routes, count, hosts) {
@@ -130,59 +132,67 @@ ${resultRows.join('\n')}
 ${chalk.hex('#BE1C00')(`Thank you for using webperf-comparison! Any issues or comments, please add them to the GitHub repository: ${repositoryURL}`)}
     `);
 };
+const logPreviousPromptAnswers = (promptAnswers) => {
+  // eslint-disable-next-line no-console
+  console.log(chalk.hex('#FFD237').bold('Selected values from previous run'));
+  Object.entries(promptAnswers).forEach(([key, answer]) => {
+    // eslint-disable-next-line no-console
+    console.log(`${chalk.bold(PROMPT_DESCRIPTIONS[key])} ${answer}`);
+  });
+};
 const loadFromJSON = () => {
-  const { data, hosts } = JSON.parse(fs.readFileSync('results.json', 'UTF-8').toString());
-  logResults(data, hosts);
+  const { data, promptAnswers } = JSON.parse(fs.readFileSync('results.json', 'UTF-8').toString());
+  logPreviousPromptAnswers(promptAnswers);
+  logResults(data, promptAnswers.hosts);
 };
 (async () => {
   const { usePrevious } = minimist(process.argv.slice(2));
   if (usePrevious) {
     loadFromJSON();
   } else {
-    const {
-      network, cpu, hosts, routes, runs, loadSite,
-    } = await prompts([{
+    const promptAnswers = await prompts([{
       type: 'select',
-      name: 'network',
-      message: 'Which network throttling option?',
-      initial: defaultAnswers.network,
+      name: PROMPT_KEY_LOOKUP.NETWORK,
+      message: PROMPT_DESCRIPTIONS[PROMPT_KEY_LOOKUP.NETWORK],
+      initial: defaultAnswers[PROMPT_KEY_LOOKUP.NETWORK],
       choices: Object.values(NETWORK_THROTTLES).map((value) => ({
         title: value,
         value,
       })),
     }, {
       type: 'select',
-      name: 'cpu',
-      message: 'Which CPU throttling option?',
-      initial: defaultAnswers.cpu,
+      name: PROMPT_KEY_LOOKUP.CPU,
+      message: PROMPT_DESCRIPTIONS[PROMPT_KEY_LOOKUP.CPU],
+      initial: defaultAnswers[PROMPT_KEY_LOOKUP.CPU],
       choices: Object.values(CPU_THROTTLES_LOOKUP).map((value) => ({
         title: CPU_THROTTLES_DESCRIPTIONS[value],
-        value: CPU_THROTTLES[value],
+        value: CPU_THROTTLES_DESCRIPTIONS[value],
       })),
     }, {
       type: 'list',
-      name: 'hosts',
-      message: 'What are the hosts that you wish to test?',
-      initial: defaultAnswers.hosts,
+      name: PROMPT_KEY_LOOKUP.HOSTS,
+      message: PROMPT_DESCRIPTIONS[PROMPT_KEY_LOOKUP.HOSTS],
+      initial: defaultAnswers[PROMPT_KEY_LOOKUP.HOSTS],
     }, {
       type: 'list',
-      name: 'routes',
-      message: 'What routes (paths) would you like to test between the two?',
-      initial: defaultAnswers.routes,
+      name: PROMPT_KEY_LOOKUP.ROUTES,
+      message: PROMPT_DESCRIPTIONS[PROMPT_KEY_LOOKUP.ROUTES],
+      initial: defaultAnswers[PROMPT_KEY_LOOKUP.ROUTES],
     }, {
       type: 'number',
-      name: 'runs',
-      message: 'How many times, per experience, would you like to run the lighthouse runner?',
-      initial: defaultAnswers.runs,
+      name: PROMPT_KEY_LOOKUP.RUNS,
+      message: PROMPT_DESCRIPTIONS[PROMPT_KEY_LOOKUP.RUNS],
+      initial: defaultAnswers[PROMPT_KEY_LOOKUP.RUNS],
     }, {
       type: 'toggle',
-      name: 'loadSite',
-      message: 'Would you like to view the full results via your browser?',
-      initial: defaultAnswers.loadSite,
+      name: PROMPT_KEY_LOOKUP.LOAD_SITE,
+      message: PROMPT_DESCRIPTIONS[PROMPT_KEY_LOOKUP.LOAD_SITE],
+      initial: defaultAnswers[PROMPT_KEY_LOOKUP.LOAD_SITE],
     }], { onCancel: () => process.exit(0) });
-    const safeHosts = hosts.map((host) => (host.endsWith('/') ? host.slice(0, -1) : host));
+    const routes = promptAnswers[PROMPT_KEY_LOOKUP.ROUTES];
+    const safeHosts = promptAnswers[PROMPT_KEY_LOOKUP.HOSTS].map((host) => (host.endsWith('/') ? host.slice(0, -1) : host));
     const safeRoutes = routes.map((route) => route.trim());
-    const gen = urlGenerator(safeRoutes, runs, safeHosts);
+    const gen = urlGenerator(safeRoutes, promptAnswers[PROMPT_KEY_LOOKUP.RUNS], safeHosts);
     const results = {};
     let item = gen.next();
     // eslint-disable-next-line no-console
@@ -191,12 +201,12 @@ const loadFromJSON = () => {
     // eslint-disable-next-line no-console
     console.debug('Chrome launched');
     const progress = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-    progress.start(hosts.length * routes.length * runs, 0);
+    progress.start(safeHosts.length * routes.length * promptAnswers[PROMPT_KEY_LOOKUP.RUNS], 0);
     while (!item.done) {
       const { route, url, host } = item.value;
       if (!results[route]) {
         // Establish initial list of results on a new route
-        results[route] = hosts.reduce((acc, curr) => ({
+        results[route] = safeHosts.reduce((acc, curr) => ({
           ...acc,
           [curr]: [],
         }), {});
@@ -206,7 +216,10 @@ const loadFromJSON = () => {
       const result = await getResultForURL(url, {
         port: chrome.port,
         throttlingMethod: 'simulate',
-        throttling: { ...NETWORK_THROTTLES_OPTIONS[network], cpuSlowdownMultiplier: cpu },
+        throttling: {
+          ...NETWORK_THROTTLES_OPTIONS[promptAnswers[PROMPT_KEY_LOOKUP.NETWORK]],
+          cpuSlowdownMultiplier: CPU_THROTTLES[promptAnswers[PROMPT_KEY_LOOKUP.CPU]],
+        },
       });
       progress.increment();
       results[route][host] = [...existingResults, result];
@@ -215,12 +228,12 @@ const loadFromJSON = () => {
     await chrome.kill();
     progress.stop();
     fs.writeFileSync('results.json', JSON.stringify({
-      hosts,
+      promptAnswers,
       data: results,
     }, null, 5));
-    logResults(results, hosts);
+    logResults(results, safeHosts);
 
-    if (loadSite) {
+    if (promptAnswers[PROMPT_KEY_LOOKUP.LOAD_SITE]) {
       webpack(webpackConfig, (err) => {
         if (err) {
           // Gotta let the user know it failed!

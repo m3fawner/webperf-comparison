@@ -103,6 +103,23 @@ const CPU_THROTTLES_DESCRIPTIONS = {
   [CPU_THROTTLES_LOOKUP.DESKTOP]: 'Desktop',
 };
 
+const PROMPT_KEY_LOOKUP = {
+  CPU: 'cpu',
+  HOSTS: 'hosts',
+  LOAD_SITE: 'loadSite',
+  NETWORK: 'network',
+  ROUTES: 'routes',
+  RUNS: 'runs',
+};
+const PROMPT_DESCRIPTIONS = {
+  [PROMPT_KEY_LOOKUP.CPU]: 'Which CPU throttling option?',
+  [PROMPT_KEY_LOOKUP.HOSTS]: 'What are the hosts that you wish to test?',
+  [PROMPT_KEY_LOOKUP.LOAD_SITE]: 'Would you like to view the full results via your browser?',
+  [PROMPT_KEY_LOOKUP.NETWORK]: 'Which network throttling option?',
+  [PROMPT_KEY_LOOKUP.ROUTES]: 'What routes (paths) would you like to test between the two?',
+  [PROMPT_KEY_LOOKUP.RUNS]: 'How many times, per experience, would you like to run the lighthouse runner?',
+};
+
 module.exports = {
   METRICS,
   METRIC_LABELS,
@@ -114,4 +131,6 @@ module.exports = {
   CPU_THROTTLES_LOOKUP,
   CPU_THROTTLES,
   CPU_THROTTLES_DESCRIPTIONS,
+  PROMPT_KEY_LOOKUP,
+  PROMPT_DESCRIPTIONS,
 };
