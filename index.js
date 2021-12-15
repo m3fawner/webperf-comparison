@@ -150,24 +150,29 @@ const loadFromJSON = () => {
   if (usePrevious) {
     loadFromJSON();
   } else {
+    const NETWORK_CHOICES = Object.values(NETWORK_THROTTLES).map((value) => ({
+      title: value,
+      value,
+    }));
+    const CPU_CHOICES = Object.values(CPU_THROTTLES_LOOKUP).map((value) => ({
+      title: CPU_THROTTLES_DESCRIPTIONS[value],
+      value: CPU_THROTTLES_DESCRIPTIONS[value],
+    }));
+    const getIndexForSelectValue = (choices, value) => Object
+      .values(choices)
+      .findIndex((choice) => choice.value.toLowerCase() === value?.toLowerCase());
     const promptAnswers = await prompts([{
       type: 'select',
       name: PROMPT_KEY_LOOKUP.NETWORK,
       message: PROMPT_DESCRIPTIONS[PROMPT_KEY_LOOKUP.NETWORK],
-      initial: defaultAnswers[PROMPT_KEY_LOOKUP.NETWORK],
-      choices: Object.values(NETWORK_THROTTLES).map((value) => ({
-        title: value,
-        value,
-      })),
+      initial: getIndexForSelectValue(NETWORK_CHOICES, defaultAnswers[PROMPT_KEY_LOOKUP.NETWORK]),
+      choices: NETWORK_CHOICES,
     }, {
       type: 'select',
       name: PROMPT_KEY_LOOKUP.CPU,
       message: PROMPT_DESCRIPTIONS[PROMPT_KEY_LOOKUP.CPU],
-      initial: defaultAnswers[PROMPT_KEY_LOOKUP.CPU],
-      choices: Object.values(CPU_THROTTLES_LOOKUP).map((value) => ({
-        title: CPU_THROTTLES_DESCRIPTIONS[value],
-        value: CPU_THROTTLES_DESCRIPTIONS[value],
-      })),
+      initial: getIndexForSelectValue(CPU_CHOICES, defaultAnswers[PROMPT_KEY_LOOKUP.CPU]),
+      choices: CPU_CHOICES,
     }, {
       type: 'list',
       name: PROMPT_KEY_LOOKUP.HOSTS,

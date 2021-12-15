@@ -62,7 +62,7 @@ The configuration file can be defined in a number of ways, as per the [rc module
 | network | Network throttling option, see [Network throttling](#network_throttling) |
 | cpu | CPU throttling option, see [CPU throttling](#cpu_throttling) |
 
-## <a name="network_throttling"></a> Network throttling
+## <a name="network_throttling"></a> Network throttling (case insensitive)
 
 Lighthouse allows network throttling to be simulated. I had looked at [throttle](https://www.sitespeed.io/documentation/throttle/) to enable this at the hardware level, but it would require sudo permissions and only works on Mac/Linux. Instead, I opted for simulated network throttling which is built into lighthouse itself.
 
@@ -74,15 +74,15 @@ Lighthouse allows network throttling to be simulated. I had looked at [throttle]
 | 4g     | 85                   | 9000                | 9000                  |
 | cable  | 14                   | 1000                | 5000                  |
 
-## <a name="cpu_throttling"></a> CPU throttling
+## <a name="cpu_throttling"></a> CPU throttling (case insensitive)
 
 Additional to network throttling, Lighthouse allows CPU throttling which helps mimic processing capabilities of mobile phones vs the device running this module. This is important for testing things like LCP/FID/Blocking time, etc.
 
-| Option (CPU modifier, 1/modifier) | Description |
-| --------------------------------- | ----------- |
-| 6                                 | Slow mobile |
-| 4                                 | Mobile      |
-| 1                                 | Your device |
+| Option      | CPU modifier, 1/modifier | Description |
+| ----------- | ------------------------ | ----------- |
+| slow_mobile | 6                        | Slow mobile |
+| mobile      | 4                        | Mobile      |
+| desktop     | 1                        | Your device |
 ## Site development
 
 Want to help change what the site output is? That's great! Thanks for the help, in advance. You will have to clone this repository to do so. After installing the npm modules, you should be able to invoke `npm start:site` to get running locally.
