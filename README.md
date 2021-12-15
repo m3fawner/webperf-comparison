@@ -78,11 +78,11 @@ Lighthouse allows network throttling to be simulated. I had looked at [throttle]
 
 Additional to network throttling, Lighthouse allows CPU throttling which helps mimic processing capabilities of mobile phones vs the device running this module. This is important for testing things like LCP/FID/Blocking time, etc.
 
-| Option      | CPU modifier, 1/modifier | Description |
-| ----------- | ------------------------ | ----------- |
-| slow_mobile | 6                        | Slow mobile |
-| mobile      | 4                        | Mobile      |
-| desktop     | 1                        | Your device |
+| Option            | CPU modifier, 1/modifier | Description |
+| ----------------- | ------------------------ | ----------- |
+| Slow mobile phone | 6                        | Slow mobile |
+| Mobile phone      | 4                        | Mobile      |
+| Desktop           | 1                        | Your device |
 ## Site development
 
 Want to help change what the site output is? That's great! Thanks for the help, in advance. You will have to clone this repository to do so. After installing the npm modules, you should be able to invoke `npm start:site` to get running locally.
